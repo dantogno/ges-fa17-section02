@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,31 +20,22 @@ public class PlayerMovement : MonoBehaviour {
         isOnGround = true;
     }
 
-    private void MyNewFunction(Collider2D collision)
-    {
-
-
-    }
-
     // Use this for initialization
     void Start ()
     {
         myRigidbody2D = GetComponent<Rigidbody2D>();  
-        
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
+        HandlePlayerMovement();
 
-        Debug.Log("horizontal input: " + horizontalInput);
+        HandleJump();
+    }
 
-
-        myRigidbody2D.velocity =
-            new Vector2(speed * horizontalInput, myRigidbody2D.velocity.y);
-
-
+    private void HandleJump()
+    {
         if (Input.GetButtonDown("Jump") && isOnGround)
         {
             myRigidbody2D.velocity =
@@ -51,6 +43,15 @@ public class PlayerMovement : MonoBehaviour {
 
             isOnGround = false;
         }
+    }
 
+    private void HandlePlayerMovement()
+    {
+        float horizontalInput = Input.GetAxis("Horizontal");
+
+        Debug.Log("horizontal input: " + horizontalInput);
+
+        myRigidbody2D.velocity =
+            new Vector2(speed * horizontalInput, myRigidbody2D.velocity.y);
     }
 }
