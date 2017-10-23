@@ -4,20 +4,36 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
+#region Editor fields
     [SerializeField]
     private float speed = 8;
 
     [SerializeField]
     private float jumpHeight = 6;
 
+    [SerializeField]
+    private float groundCheckRadius = 0.35f;
+
+    [SerializeField]
+    private Transform groundCheckPosition;
+
+    [SerializeField]
+    private LayerMask whatIsGround;
+    #endregion
+
+#region private fields
     private bool isOnGround;
-
+    private float horizontalInput;
     private Rigidbody2D myRigidbody2D;
+    private bool pressedJump;
+#endregion
 
-
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void UpdateIsOnGround()
     {
-        isOnGround = true;
+       Collider2D[] groundColliders = 
+            Physics2D.OverlapCircleAll(groundCheckPosition.position, groundCheckRadius, whatIsGround);
+
+        isOnGround = groundColliders.Length > 0;
     }
 
     // Use this for initialization
@@ -29,14 +45,25 @@ public class PlayerMovement : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        HandlePlayerMovement();
+        GetMovementInput();
+        GetJumpInput();
+        UpdateIsOnGround();
+    }
 
+    private void GetJumpInput()
+    {
+        pressedJump = Input.GetButtonDown("Jump");
+    }
+
+    private void FixedUpdate()
+    {
+        HandlePlayerMovement();        
         HandleJump();
     }
 
     private void HandleJump()
     {
-        if (Input.GetButtonDown("Jump") && isOnGround)
+        if (pressedJump && isOnGround)
         {
             myRigidbody2D.velocity =
                 new Vector2(myRigidbody2D.velocity.x, jumpHeight);
@@ -45,12 +72,13 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    private void HandlePlayerMovement()
+    private void GetMovementInput()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
+        horizontalInput = Input.GetAxis("Horizontal");
+    }
 
-        Debug.Log("horizontal input: " + horizontalInput);
-
+    private void HandlePlayerMovement()
+    {        
         myRigidbody2D.velocity =
             new Vector2(speed * horizontalInput, myRigidbody2D.velocity.y);
     }

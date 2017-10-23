@@ -13,6 +13,9 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     float xOffset;
 
+    [SerializeField]
+    float cameraSpeed = 0.5f;
+
     float zOffset;
 	// Use this for initialization
 	void Start ()
@@ -23,10 +26,13 @@ public class CameraController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        Vector3 newPosition = 
+        Vector3 playersLocation = 
             new Vector3(objectToFollow.position.x + xOffset, 
             objectToFollow.position.y + yOffset, zOffset);
 
-        transform.position = newPosition;	
+        Vector3 adjustedPosition = 
+            Vector3.Lerp(transform.position, playersLocation, cameraSpeed * Time.deltaTime);
+
+        transform.position = adjustedPosition;	
 	}
 }
