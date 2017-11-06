@@ -9,6 +9,12 @@ public class Coin : MonoBehaviour
     private BoxCollider2D boxCollider2D;
     private SpriteRenderer spriteRenderer;
 
+
+    // make this static, so that there's only one coinCount that belongs
+    // to the entire Coin class as a whole.
+    // as opposed to one per instance of Coin
+    public static int coinCount = 0;
+
     private void Start()
     {
         // Step 2: initialize variables
@@ -17,16 +23,25 @@ public class Coin : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Coin touched!");
-        audioSource.Play();
-        boxCollider2D.enabled = false;
-        spriteRenderer.enabled = false;
+        if(collision.gameObject.tag == "Player")
+        {
+            Debug.Log("Coin touched!");
+            audioSource.Play();
+            boxCollider2D.enabled = false;
+            spriteRenderer.enabled = false;
 
-        float length = audioSource.clip.length + 0.2f;
+            float length = audioSource.clip.length + 0.2f;
+
+            // Increment coint count!
+            coinCount++;
+
+            Debug.Log("Coin count: " + coinCount);
        
-        Destroy(gameObject, length);
+            Destroy(gameObject, length);
+        }
     }
 
   
